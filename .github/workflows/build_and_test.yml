@@ -1,0 +1,54 @@
+name: build and test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go:
+          - "1.20"
+          - "1.21"
+    name: run tests with go version ${{ matrix.go }}
+    steps:
+      - name: install go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: make build
+
+      - name: Test
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          make cover
+
+      - name: Coveralls
+        if: (matrix.go == '1.21')
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          if [[ -n "$COVERALLS_TOKEN" ]]; then
+            make coveralls
+          fi
+
+      - name: Upload coverage
+        if: (matrix.go == '1.21')
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.*
+
+      - name: Assert no changes
+        run: make assert-no-changes
