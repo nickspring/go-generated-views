@@ -1,6 +1,6 @@
 module github.com/nickspring/go-generated-views
 
-go 1.22
+go 1.20
 
 require (
 	github.com/bradleyjkemp/cupaloy/v2 v2.8.0
