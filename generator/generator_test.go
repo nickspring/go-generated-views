@@ -46,6 +46,25 @@ func TestNoStructFile(t *testing.T) {
 	}
 }
 
+// TestMoreStructWithPointer
+func TestMoreStructWithPointer(t *testing.T) {
+	input := `package test
+	type MyStruct struct {
+		Field1	*string ` + "`json(Myview):\"something\"`" + `
+		Field2 uint 
+	}
+	`
+	g := NewGenerator()
+	f, err := parser.ParseFile(g.fileSet, "TestRequiredErrors", input, parser.ParseComments)
+	assert.Nil(t, err, "Error parsing input: %v", err)
+
+	output, err := g.Generate(f)
+	assert.Nil(t, err, "Error generating formatted code")
+	if false { // Debugging statement
+		fmt.Println(string(output))
+	}
+}
+
 // TestNoFile
 func TestNoFile(t *testing.T) {
 	g := NewGenerator()
