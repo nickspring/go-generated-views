@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"sort"
 	"strconv"
 	"strings"
@@ -113,7 +114,7 @@ func NewStructList(node *ast.File) []Struct {
 							}
 							sf := StructField{
 								Name: field.Names[0].Name,
-								Type: fmt.Sprint(field.Type),
+								Type: types.ExprString(field.Type),
 								Tag:  structTag,
 							}
 							structInfo.Fields = append(structInfo.Fields, sf)
